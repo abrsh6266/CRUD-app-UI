@@ -1,26 +1,31 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import { Button } from 'antd';
+import UserList from './components/UserList';
+import UserForm from './components/UserForm';
+import './App.css'; // Import the CSS file for styling
 
-function App() {
+const App: React.FC = () => {
+  const [visible, setVisible] = useState(false);
+
+  const handleCreate = (values: any) => {
+    // Implement the logic to send a request to create a user
+    console.log('Received values:', values);
+    setVisible(false);
+  };
+
+  const handleCancel = () => {
+    setVisible(false);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="app-container">
+      <Button type="primary" onClick={() => setVisible(true)}>
+        Create User
+      </Button>
+      <UserList />
+      <UserForm visible={visible} onCreate={handleCreate} onCancel={handleCancel} />
     </div>
   );
-}
+};
 
 export default App;
