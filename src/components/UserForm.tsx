@@ -1,7 +1,6 @@
-// src/components/UserForm.tsx
 import React from 'react';
-import { Form, Input, Modal, Button } from 'antd';
-import { useMutation, useQueryClient } from 'react-query';
+import { Form, Input, Modal} from 'antd';
+import { useQueryClient } from 'react-query';
 
 interface UserFormProps {
   visible: boolean;
@@ -22,11 +21,9 @@ const UserForm: React.FC<UserFormProps> = ({ visible, onCreate, onCancel }) => {
     });
 
     if (response.ok) {
-      // Invalidate and refetch the 'users' query after creating a new user
       queryClient.invalidateQueries('users');
       onCreate(formData);
     } else {
-      // Handle error
       console.error('Error creating user');
     }
   };
@@ -35,7 +32,7 @@ const UserForm: React.FC<UserFormProps> = ({ visible, onCreate, onCancel }) => {
 
   return (
     <Modal
-      visible={visible}
+      open={visible}
       title="Create User"
       okText="Create"
       cancelText="Cancel"

@@ -1,7 +1,7 @@
-// src/components/UserUpdateForm.tsx
 import React, { useState, useEffect } from 'react';
-import { Modal, Form, Button } from 'react-bootstrap';
-import { useMutation, useQueryClient } from 'react-query';
+import { Modal, Form, Input, Button } from 'antd';
+import { useQueryClient } from 'react-query';
+
 interface UserUpdateFormProps {
   user: any | null;
   show: boolean;
@@ -17,7 +17,6 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({ user, show, onClose }) 
   });
 
   useEffect(() => {
-    // Set the form data when the user prop changes
     if (user) {
       setFormData({
         name: user.name,
@@ -27,7 +26,9 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({ user, show, onClose }) 
       });
     }
   }, [user]);
+
   const queryClient = useQueryClient();
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
@@ -44,82 +45,75 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({ user, show, onClose }) 
       });
 
       if (response.ok) {
-        // Invalidate and refetch the 'users' query after updating a user
         queryClient.invalidateQueries('users');
         console.log('User updated successfully!');
       } else {
-        // Handle error
         console.error('Error updating user');
       }
     } catch (error) {
       console.error('Error updating user:', error);
     }
 
-    // Close the modal
     onClose();
   };
 
   return (
-    <Modal show={show} onHide={onClose}>
-      <Modal.Header closeButton>
-        <Modal.Title>Update User</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <Form>
-          <Form.Group controlId="formName">
-            <Form.Label>Name</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Enter name"
-              name="name"
-              value={formData.name}
-              onChange={handleInputChange}
-            />
-          </Form.Group>
-
-          <Form.Group controlId="formEmail">
-            <Form.Label>Email</Form.Label>
-            <Form.Control
-              type="email"
-              placeholder="Enter email"
-              name="email"
-              value={formData.email}
-              onChange={handleInputChange}
-            />
-          </Form.Group>
-
-          <Form.Group controlId="formPassword">
-            <Form.Label>Password</Form.Label>
-            <Form.Control
-              type="password"
-              placeholder="Enter password"
-              name="password"
-              value={formData.password}
-              onChange={handleInputChange}
-            />
-          </Form.Group>
-
-          <Form.Group controlId="formPhone">
-            <Form.Label>Phone Number</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Enter phone number"
-              name="phone"
-              value={formData.phone}
-              onChange={handleInputChange}
-            />
-          </Form.Group>
-        </Form>
-      </Modal.Body>
-      <Modal.Footer>
-        <Button variant="secondary" onClick={onClose}>
-          Close
-        </Button>
-        <Button variant="primary" onClick={handleUpdate}>
+    <Modal 
+    title="Update User" 
+    open={show} 
+    onCancel={onClose} 
+    footer={[
+        <Button key="cancel" onClick={onClose}>
+          Cancel
+        </Button>,
+        <Button key="update" type="primary" onClick={handleUpdate}>
           Update
-        </Button>
-      </Modal.Footer>
+        </Button>,
+      ]}
+    >
+      <Form>
+        <Form.Item label="Name">
+          <Input
+            type="text"
+            placeholder="Enter name"
+            name="name"
+            value={formData.name}
+            onChange={handleInputChange}
+          />
+        </Form.Item>
+
+        <Form.Item label="Email">
+          <Input
+            type="email"
+            placeholder="Enter email"
+            name="email"
+            value={formData.email}
+            onChange={handleInputChange}
+          />
+        </Form.Item>
+
+        <Form.Item label="Password">
+          <Input
+            type="password"
+            placeholder="Enter password"
+            name="password"
+            value={formData.password}
+            onChange={handleInputChange}
+          />
+        </Form.Item>
+
+        <Form.Item label="Phone Number">
+          <Input
+            type="text"
+            placeholder="Enter phone number"
+            name="phone"
+            value={formData.phone}
+            onChange={handleInputChange}
+          />
+        </Form.Item>
+      </Form>
     </Modal>
   );
 };
+
 export default UserUpdateForm;

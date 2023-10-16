@@ -1,6 +1,5 @@
-// src/components/UserList.tsx
 import React, { useState } from 'react';
-import { Button, Container, Table, Modal } from 'react-bootstrap';
+import { Button, Table, Space } from 'antd';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import UserUpdateForm from './UserUpdateForm';
 
@@ -21,10 +20,8 @@ const UserList: React.FC = () => {
     });
 
     if (response.ok) {
-      // Invalidate and refetch the 'users' query after deleting a user
       queryClient.invalidateQueries('users');
     } else {
-      // Handle error
       console.error('Error deleting user');
     }
   });
@@ -38,6 +35,43 @@ const UserList: React.FC = () => {
     deleteUserMutation.mutate(userId);
   };
 
+  const columns = [
+    {
+      title: 'ID',
+      dataIndex: 'id',
+      key: 'id',
+    },
+    {
+      title: 'Name',
+      dataIndex: 'name',
+      key: 'name',
+    },
+    {
+      title: 'Phone',
+      dataIndex: 'phone',
+      key: 'phone',
+    },
+    {
+      title: 'Email',
+      dataIndex: 'email',
+      key: 'email',
+    },
+    {
+      title: 'Actions',
+      key: 'actions',
+      render: (text: any, user: any) => (
+        <Space>
+          <Button type="primary" onClick={() => handleUpdate(user)}>
+            Update
+          </Button>
+          <Button onClick={() => handleDelete(user.id)}>
+            Delete
+          </Button>
+        </Space>
+      ),
+    },
+  ];
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -45,46 +79,7 @@ const UserList: React.FC = () => {
   return (
     <div>
       <h1 className="my-4 text-center">User List</h1>
-      <Container fluid>
-        <div className="mx-3 mt-3">
-          <Table striped bordered hover responsive>
-            <thead>
-              <tr className="bg-gray-200">
-                <th>ID</th>
-                <th>Name</th>
-                <th>Phone</th>
-                <th>Email</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.map((user: any) => (
-                <tr key={user.id}>
-                  <td>{user.id}</td>
-                  <td>{user.name}</td>
-                  <td>{user.phone}</td>
-                  <td>{user.email}</td>
-                  <td>
-                    <Button
-                      variant="success"
-                      className="mr-2"
-                      onClick={() => handleUpdate(user)}
-                    >
-                      Update
-                    </Button>
-                    <Button
-                      variant="danger"
-                      onClick={() => handleDelete(user.id)}
-                    >
-                      Delete
-                    </Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-        </div>
-      </Container>
+      <Table dataSource={users} columns={columns} bordered rowKey="id" />
 
       <UserUpdateForm
         user={selectedUser}
